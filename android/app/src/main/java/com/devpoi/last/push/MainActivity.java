@@ -1,4 +1,4 @@
-package com.lastpush;
+package com.devpoi.last.push;
 
 import com.facebook.react.ReactActivity;
 

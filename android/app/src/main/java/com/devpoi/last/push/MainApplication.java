@@ -1,4 +1,4 @@
-package com.lastpush;
+package com.devpoi.last.push;
 
 import android.app.Application;
 import android.content.Context;
