@@ -122,7 +122,7 @@ export default class App extends Component {
   }
 
   onNotif(notif) {
-    Alert.alert(notif.title, notif.message);
+    Alert.alert(JSON.stringify(notif.title), JSON.stringify(notif.message));
   }
 
   handlePerm(perms) {
