@@ -16,6 +16,8 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* lastpushTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* lastpushTests.m */; };
+		A0F3B18124B1D96400A60BB3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0F3B18024B1D96400A60BB3 /* GoogleService-Info.plist */; };
+		A0F3B18224B1D96400A60BB3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0F3B18024B1D96400A60BB3 /* GoogleService-Info.plist */; };
 		B4EAE96AEE3E277EFB392497 /* libPods-lastpush-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4350DEF0D18A3030E757211 /* libPods-lastpush-tvOS.a */; };
 		EE49A9A5474034614DE473D1 /* libPods-lastpush-lastpushTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C0972054AC570F4AFC74808 /* libPods-lastpush-lastpushTests.a */; };
 		F6B79B42948900F4E5CFF3F4 /* libPods-lastpush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A599BD5910F8BB6FE197DB0 /* libPods-lastpush.a */; };
@@ -62,6 +64,7 @@
 		86505194ACCDF8DECAF1239C /* Pods-lastpush-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lastpush-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-lastpush-tvOSTests/Pods-lastpush-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8AE0FFB4F2F06AE6C8A767F3 /* Pods-lastpush-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lastpush-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-lastpush-tvOS/Pods-lastpush-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		8DFBFFB08E11EE0F5AF7DA85 /* Pods-lastpush-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lastpush-tvOS.release.xcconfig"; path = "Target Support Files/Pods-lastpush-tvOS/Pods-lastpush-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		A0F3B18024B1D96400A60BB3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A4350DEF0D18A3030E757211 /* libPods-lastpush-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-lastpush-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA8B5A5BA94404FAF62A80BC /* Pods-lastpush.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lastpush.release.xcconfig"; path = "Target Support Files/Pods-lastpush/Pods-lastpush.release.xcconfig"; sourceTree = "<group>"; };
 		D8DB9F51B8F28230CBDA90FA /* Pods-lastpush.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-lastpush.debug.xcconfig"; path = "Target Support Files/Pods-lastpush/Pods-lastpush.debug.xcconfig"; sourceTree = "<group>"; };
@@ -125,6 +128,7 @@
 		13B07FAE1A68108700A75B9A /* lastpush */ = {
 			isa = PBXGroup;
 			children = (
+				A0F3B18024B1D96400A60BB3 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -331,6 +335,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0F3B18224B1D96400A60BB3 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +345,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				A0F3B18124B1D96400A60BB3 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
