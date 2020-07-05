@@ -112,433 +112,18 @@ $ yarn add @react-native-community/push-notification-ios
 
 - ~App.js (수정 or 전체 대치)
 
-    ```bash
-    /**
-     * Sample React Native App
-     * https://github.com/facebook/react-native
-     *
-     * @format
-     * @flow
-     */
-
-    import React, {Component} from 'react';
-    import {
-      TextInput,
-      StyleSheet,
-      Text,
-      View,
-      TouchableOpacity,
-      Alert,
-    } from 'react-native';
-    import NotifService from './NotifService';
-
-    export default class App extends Component {
-      constructor(props) {
-        super(props);
-        this.state = {};
-
-        this.notif = new NotifService(
-          this.onRegister.bind(this),
-          this.onNotif.bind(this),
-        );
-      }
-
-      render() {
-        return (
-          <View style={styles.container}>
-            <Text style={styles.title}>
-              Example app react-native-push-notification
-            </Text>
-            <View style={styles.spacer}></View>
-            <TextInput
-              style={styles.textField}
-              value={this.state.registerToken}
-              placeholder="Register token"
-            />
-            <View style={styles.spacer}></View>
-
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.localNotif();
-              }}>
-              <Text>Local Notification (now)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                // this.notif.localNotif('sample.mp3');
-                this.notif.localNotif();
-              }}>
-              <Text>Local Notification with sound (now)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.scheduleNotif();
-              }}>
-              <Text>Schedule Notification in 30s</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                // this.notif.scheduleNotif('sample.mp3');
-                this.notif.scheduleNotif();
-              }}>
-              <Text>Schedule Notification with sound in 30s</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.cancelNotif();
-              }}>
-              <Text>Cancel last notification (if any)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.cancelAll();
-              }}>
-              <Text>Cancel all notifications</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.checkPermission(this.handlePerm.bind(this));
-              }}>
-              <Text>Check Permission</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.requestPermissions();
-              }}>
-              <Text>Request Permissions</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                this.notif.abandonPermissions();
-              }}>
-              <Text>Abandon Permissions</Text>
-            </TouchableOpacity>
-
-            <View style={styles.spacer}></View>
-
-            {this.state.fcmRegistered && <Text>FCM Configured !</Text>}
-
-            <View style={styles.spacer}></View>
-          </View>
-        );
-      }
-
-      onRegister(token) {
-        this.setState({registerToken: token.token, fcmRegistered: true});
-      }
-
-      onNotif(notif) {
-        Alert.alert(JSON.stringify(notif.title), JSON.stringify(notif.message));
-      }
-
-      handlePerm(perms) {
-        Alert.alert('Permissions', JSON.stringify(perms));
-      }
-    }
-
-    const styles = StyleSheet.create({
-      container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-      },
-      welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-      },
-      button: {
-        borderWidth: 1,
-        borderColor: '#000000',
-        margin: 5,
-        padding: 5,
-        width: '70%',
-        backgroundColor: '#DDDDDD',
-        borderRadius: 5,
-      },
-      textField: {
-        borderWidth: 1,
-        borderColor: '#AAAAAA',
-        color: 'red',
-        margin: 5,
-        padding: 5,
-        width: '70%',
-      },
-      spacer: {
-        height: 10,
-      },
-      title: {
-        fontWeight: 'bold',
-        fontSize: 20,
-        textAlign: 'center',
-      },
-    });
-    ```
-
 - ~NotifService.js (신규)
-
-    ```bash
-    import PushNotification from 'react-native-push-notification';
-    import NotificationHandler from './NotificationHandler';
-
-    export default class NotifService {
-      constructor(onRegister, onNotification) {
-        this.lastId = 0;
-
-        NotificationHandler.attachRegister(onRegister);
-        NotificationHandler.attachNotification(onNotification);
-
-        // Clear badge number at start
-        PushNotification.getApplicationIconBadgeNumber(function (number) {
-          if (number > 0) {
-            PushNotification.setApplicationIconBadgeNumber(0);
-          }
-        });
-      }
-
-      localNotif(soundName) {
-        this.lastId++;
-        PushNotification.localNotification({
-          /* Android Only Properties */
-          id: this.lastId, // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
-          ticker: 'My Notification Ticker', // (optional)
-          autoCancel: true, // (optional) default: true
-          largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
-          smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
-          bigText: 'My big text that will be shown when notification is expanded', // (optional) default: "message" prop
-          subText: 'This is a subText', // (optional) default: none
-          color: 'red', // (optional) default: system default
-          vibrate: true, // (optional) default: true
-          vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-          tag: 'some_tag', // (optional) add tag to message
-          group: 'group', // (optional) add group to message
-          ongoing: false, // (optional) set whether this is an "ongoing" notification
-
-          /* iOS only properties */
-          alertAction: 'view', // (optional) default: view
-          category: '', // (optional) default: empty string
-          userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
-
-          /* iOS and Android properties */
-          title: 'Local Notification', // (optional)
-          message: 'My Notification Message', // (required)
-          playSound: !!soundName, // (optional) default: true
-          soundName: soundName ? soundName : 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
-          number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-          actions: '["Yes", "No"]', // (Android only) See the doc for notification actions to know more
-        });
-      }
-
-      scheduleNotif(soundName) {
-        this.lastId++;
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 30 * 1000), // in 30 secs
-
-          /* Android Only Properties */
-          id: this.lastId, // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
-          ticker: 'My Notification Ticker', // (optional)
-          autoCancel: true, // (optional) default: true
-          largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
-          smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
-          bigText: 'My big text that will be shown when notification is expanded', // (optional) default: "message" prop
-          subText: 'This is a subText', // (optional) default: none
-          color: 'blue', // (optional) default: system default
-          vibrate: true, // (optional) default: true
-          vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-          tag: 'some_tag', // (optional) add tag to message
-          group: 'group', // (optional) add group to message
-          ongoing: false, // (optional) set whether this is an "ongoing" notification
-
-          /* iOS only properties */
-          alertAction: 'view', // (optional) default: view
-          category: '', // (optional) default: empty string
-          userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
-
-          /* iOS and Android properties */
-          title: 'Scheduled Notification', // (optional)
-          message: 'My Notification Message', // (required)
-          playSound: !!soundName, // (optional) default: true
-          number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-          soundName: soundName ? soundName : 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
-        });
-      }
-
-      checkPermission(cbk) {
-        return PushNotification.checkPermissions(cbk);
-      }
-
-      requestPermissions() {
-        return PushNotification.requestPermissions();
-      }
-
-      cancelNotif() {
-        PushNotification.cancelLocalNotifications({id: '' + this.lastId});
-      }
-
-      cancelAll() {
-        PushNotification.cancelAllLocalNotifications();
-      }
-
-      abandonPermissions() {
-        PushNotification.abandonPermissions();
-      }
-    }
-    ```
 
 - ~NotificationsHandler.js (신규)
 
-    ```bash
-    import PushNotification from 'react-native-push-notification';
-
-    class NotificationHandler {
-      onNotification(notification) {
-        console.log('NotificationHandler:', notification);
-
-        if (typeof this._onNotification === 'function') {
-          this._onNotification(notification);
-        }
-      }
-
-      onRegister(token) {
-        console.log('NotificationHandler:', token);
-
-        if (typeof this._onRegister === 'function') {
-          this._onRegister(token);
-        }
-      }
-
-      attachRegister(handler) {
-        this._onRegister = handler;
-      }
-
-      attachNotification(handler) {
-        this._onNotification = handler;
-      }
-    }
-
-    const handler = new NotificationHandler();
-
-    PushNotification.configure({
-      // (optional) Called when Token is generated (iOS and Android)
-      onRegister: handler.onRegister.bind(handler),
-
-      // (required) Called when a remote or local notification is opened or received
-      onNotification: handler.onNotification.bind(handler),
-
-      // IOS ONLY (optional): default: all - Permissions to register.
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-
-      // Should the initial notification be popped automatically
-      // default: true
-      popInitialNotification: true,
-
-      /**
-       * (optional) default: true
-       * - Specified if permissions (ios) and token (android and ios) will requested or not,
-       * - if not, you must call PushNotificationsHandler.requestPermissions() later
-       */
-      requestPermissions: true,
-    });
-
-    export default handler;
-    ```
 
 ## 3.2 IOS
 
 - Podfile (수정 - 1 add)
 
     ```bash
-    platform :ios, '9.0'
-    require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-
-    def add_flipper_pods!(versions = {})
-      versions['Flipper'] ||= '~> 0.33.1'
-      versions['DoubleConversion'] ||= '1.1.7'
-      versions['Flipper-Folly'] ||= '~> 2.1'
-      versions['Flipper-Glog'] ||= '0.3.6'
-      versions['Flipper-PeerTalk'] ||= '~> 0.0.4'
-      versions['Flipper-RSocket'] ||= '~> 1.0'
-
-      pod 'FlipperKit', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FlipperKitLayoutPlugin', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/SKIOSNetworkPlugin', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FlipperKitUserDefaultsPlugin', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FlipperKitReactPlugin', versions['Flipper'], :configuration => 'Debug'
-
-      # List all transitive dependencies for FlipperKit pods
-      # to avoid them being linked in Release builds
-      pod 'Flipper', versions['Flipper'], :configuration => 'Debug'
-      pod 'Flipper-DoubleConversion', versions['DoubleConversion'], :configuration => 'Debug'
-      pod 'Flipper-Folly', versions['Flipper-Folly'], :configuration => 'Debug'
-      pod 'Flipper-Glog', versions['Flipper-Glog'], :configuration => 'Debug'
-      pod 'Flipper-PeerTalk', versions['Flipper-PeerTalk'], :configuration => 'Debug'
-      pod 'Flipper-RSocket', versions['Flipper-RSocket'], :configuration => 'Debug'
-      pod 'FlipperKit/Core', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/CppBridge', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FBCxxFollyDynamicConvert', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FBDefines', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FKPortForwarding', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FlipperKitHighlightOverlay', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FlipperKitLayoutTextSearchable', versions['Flipper'], :configuration => 'Debug'
-      pod 'FlipperKit/FlipperKitNetworkPlugin', versions['Flipper'], :configuration => 'Debug'
-    end
-
-    # Post Install processing for Flipper
-    def flipper_post_install(installer)
-      installer.pods_project.targets.each do |target|
-        if target.name == 'YogaKit'
-          target.build_configurations.each do |config|
-            config.build_settings['SWIFT_VERSION'] = '4.1'
-          end
-        end
-      end
-    end
-
-    target 'rnpush' do
-      # Pods for rnpush
-      pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
-      pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
-      pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
-      pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
-      pod 'React', :path => '../node_modules/react-native/'
-      pod 'React-Core', :path => '../node_modules/react-native/'
-      pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
-      pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
-      pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
-      pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
-      pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
-      pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
-      pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
-      pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
-      pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
-      pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
-      pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
-      pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
-
-      pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
-      pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
-      pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
-      pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-      pod 'ReactCommon/callinvoker', :path => "../node_modules/react-native/ReactCommon"
-      pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
-      pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
-
-      pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-      pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+      ... 
+      
       pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
       pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios' << 1) add
@@ -547,100 +132,45 @@ $ yarn add @react-native-community/push-notification-ios
         inherit! :complete
         # Pods for testing
       end
-
-      use_native_modules!
-
-      # Enables Flipper.
-      #
-      # Note that if you have use_frameworks! enabled, Flipper will not work and
-      # you should disable these next few lines.
-      add_flipper_pods!
-      post_install do |installer|
-        flipper_post_install(installer)
-      end
-    end
-
-    target 'rnpush-tvOS' do
-      # Pods for rnpush-tvOS
-
-      target 'rnpush-tvOSTests' do
-        inherit! :search_paths
-        # Pods for testing
-      end
-    end
+      
+      ...
     ```
 
 - AppDelegate.h (수정 - 2 add)
 
     ```bash
-    #import <React/RCTBridgeDelegate.h>
-    #import <UIKit/UIKit.h>
+    ...
+    
     #import <UserNotifications/UNUserNotificationCenter.h>  << add
+    
+    // UNUserNotificationCenterDelegate add
+    @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, UNUserNotificationCenterDelegate>
 
-    @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, UNUserNotificationCenterDelegate  << add>
-
-    @property (nonatomic, strong) UIWindow *window;
-
-    @end
+    ...
     ```
 
 - AppDelegate.m (수정 - 4 add)
 
     ```bash
-    #import "AppDelegate.h"
-
-    #import <React/RCTBridge.h>
-    #import <React/RCTBundleURLProvider.h>
-    #import <React/RCTRootView.h>
+    ...
     #import <UserNotifications/UserNotifications.h> << add
     #import <RNCPushNotificationIOS.h> << add
 
-    #if DEBUG
-    #import <FlipperKit/FlipperClient.h>
-    #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
-    #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
-    #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
-    #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
-    #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-
-    static void InitializeFlipper(UIApplication *application) {
-      FlipperClient *client = [FlipperClient sharedClient];
-      SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
-      [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];
-      [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
-      [client addPlugin:[FlipperKitReactPlugin new]];
-      [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
-      [client start];
-    }
-    #endif
-
-    @implementation AppDelegate
-
-    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-    {
-    #if DEBUG
-      InitializeFlipper(application);
-    #endif
+    ...
 
       RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
       RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                        moduleName:@"rnpush"
                                                 initialProperties:nil];
 
-      UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+      UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter]; << add
       center.delegate = self; << add
 
-      rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
-      self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-      UIViewController *rootViewController = [UIViewController new];
-      rootViewController.view = rootView;
-      self.window.rootViewController = rootViewController;
-      [self.window makeKeyAndVisible];
-      return YES;
+      ...
+      
     }
 
-    // add
+    // add start
     // Required to register for notifications
     - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
     {
@@ -673,6 +203,8 @@ $ yarn add @react-native-community/push-notification-ios
     {
       completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
     }
+    
+    // add end
 
     - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
     {
@@ -699,19 +231,7 @@ $ yarn start & yarn ios
 - ~android/build.gradle  (수정 - 1 add)
 
     ```bash
-    // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-    buildscript {
-        ext {
-            buildToolsVersion = "28.0.3"
-            minSdkVersion = 16
-            compileSdkVersion = 28
-            targetSdkVersion = 28
-        }
-        repositories {
-            google()
-            jcenter()
-        }
+    ...
         dependencies {
             classpath("com.android.tools.build:gradle:3.5.2")
 
@@ -721,247 +241,14 @@ $ yarn start & yarn ios
             // in the individual module build.gradle files
         }
     }
-
-    allprojects {
-        repositories {
-            mavenLocal()
-            maven {
-                // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-                url("$rootDir/../node_modules/react-native/android")
-            }
-            maven {
-                // Android JSC is installed from npm
-                url("$rootDir/../node_modules/jsc-android/dist")
-            }
-
-            google()
-            jcenter()
-            maven { url 'https://www.jitpack.io' }
-        }
-    }
+    ...
     ```
 
 - ~android/app/build.gradle (수정 - 1 add)
 
     ```bash
-    apply plugin: "com.android.application"
-
-    import com.android.build.OutputFile
-
-    /**
-     * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
-     * and bundleReleaseJsAndAssets).
-     * These basically call `react-native bundle` with the correct arguments during the Android build
-     * cycle. By default, bundleDebugJsAndAssets is skipped, as in debug/dev mode we prefer to load the
-     * bundle directly from the development server. Below you can see all the possible configurations
-     * and their defaults. If you decide to add a configuration block, make sure to add it before the
-     * `apply from: "../../node_modules/react-native/react.gradle"` line.
-     *
-     * project.ext.react = [
-     *   // the name of the generated asset file containing your JS bundle
-     *   bundleAssetName: "index.android.bundle",
-     *
-     *   // the entry file for bundle generation. If none specified and
-     *   // "index.android.js" exists, it will be used. Otherwise "index.js" is
-     *   // default. Can be overridden with ENTRY_FILE environment variable.
-     *   entryFile: "index.android.js",
-     *
-     *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
-     *   bundleCommand: "ram-bundle",
-     *
-     *   // whether to bundle JS and assets in debug mode
-     *   bundleInDebug: false,
-     *
-     *   // whether to bundle JS and assets in release mode
-     *   bundleInRelease: true,
-     *
-     *   // whether to bundle JS and assets in another build variant (if configured).
-     *   // See http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Build-Variants
-     *   // The configuration property can be in the following formats
-     *   //         'bundleIn${productFlavor}${buildType}'
-     *   //         'bundleIn${buildType}'
-     *   // bundleInFreeDebug: true,
-     *   // bundleInPaidRelease: true,
-     *   // bundleInBeta: true,
-     *
-     *   // whether to disable dev mode in custom build variants (by default only disabled in release)
-     *   // for example: to disable dev mode in the staging build type (if configured)
-     *   devDisabledInStaging: true,
-     *   // The configuration property can be in the following formats
-     *   //         'devDisabledIn${productFlavor}${buildType}'
-     *   //         'devDisabledIn${buildType}'
-     *
-     *   // the root of your project, i.e. where "package.json" lives
-     *   root: "../../",
-     *
-     *   // where to put the JS bundle asset in debug mode
-     *   jsBundleDirDebug: "$buildDir/intermediates/assets/debug",
-     *
-     *   // where to put the JS bundle asset in release mode
-     *   jsBundleDirRelease: "$buildDir/intermediates/assets/release",
-     *
-     *   // where to put drawable resources / React Native assets, e.g. the ones you use via
-     *   // require('./image.png')), in debug mode
-     *   resourcesDirDebug: "$buildDir/intermediates/res/merged/debug",
-     *
-     *   // where to put drawable resources / React Native assets, e.g. the ones you use via
-     *   // require('./image.png')), in release mode
-     *   resourcesDirRelease: "$buildDir/intermediates/res/merged/release",
-     *
-     *   // by default the gradle tasks are skipped if none of the JS files or assets change; this means
-     *   // that we don't look at files in android/ or ios/ to determine whether the tasks are up to
-     *   // date; if you have any other folders that you want to ignore for performance reasons (gradle
-     *   // indexes the entire tree), add them here. Alternatively, if you have JS files in android/
-     *   // for example, you might want to remove it from here.
-     *   inputExcludes: ["android/**", "ios/**"],
-     *
-     *   // override which node gets called and with what additional arguments
-     *   nodeExecutableAndArgs: ["node"],
-     *
-     *   // supply additional arguments to the packager
-     *   extraPackagerArgs: []
-     * ]
-     */
-
-    project.ext.react = [
-        enableHermes: false,  // clean and rebuild if changing
-    ]
-
-    apply from: "../../node_modules/react-native/react.gradle"
-
-    /**
-     * Set this to true to create two separate APKs instead of one:
-     *   - An APK that only works on ARM devices
-     *   - An APK that only works on x86 devices
-     * The advantage is the size of the APK is reduced by about 4MB.
-     * Upload all the APKs to the Play Store and people will download
-     * the correct one based on the CPU architecture of their device.
-     */
-    def enableSeparateBuildPerCPUArchitecture = false
-
-    /**
-     * Run Proguard to shrink the Java bytecode in release builds.
-     */
-    def enableProguardInReleaseBuilds = false
-
-    /**
-     * The preferred build flavor of JavaScriptCore.
-     *
-     * For example, to use the international variant, you can use:
-     * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-     *
-     * The international variant includes ICU i18n library and necessary data
-     * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-     * give correct results when using with locales other than en-US.  Note that
-     * this variant is about 6MiB larger per architecture than default.
-     */
-    def jscFlavor = 'org.webkit:android-jsc:+'
-
-    /**
-     * Whether to enable the Hermes VM.
-     *
-     * This should be set on project.ext.react and mirrored here.  If it is not set
-     * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
-     * and the benefits of using Hermes will therefore be sharply reduced.
-     */
-    def enableHermes = project.ext.react.get("enableHermes", false);
-
-    android {
-        compileSdkVersion rootProject.ext.compileSdkVersion
-
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
-        }
-
-        defaultConfig {
-            applicationId "com.devpoi.rnpush"
-            minSdkVersion rootProject.ext.minSdkVersion
-            targetSdkVersion rootProject.ext.targetSdkVersion
-            versionCode 1
-            versionName "1.0"
-        }
-        splits {
-            abi {
-                reset()
-                enable enableSeparateBuildPerCPUArchitecture
-                universalApk false  // If true, also generate a universal APK
-                include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
-            }
-        }
-        signingConfigs {
-            debug {
-                storeFile file('debug.keystore')
-                storePassword 'android'
-                keyAlias 'androiddebugkey'
-                keyPassword 'android'
-            }
-        }
-        buildTypes {
-            debug {
-                signingConfig signingConfigs.debug
-            }
-            release {
-                // Caution! In production, you need to generate your own keystore file.
-                // see https://facebook.github.io/react-native/docs/signed-apk-android.
-                signingConfig signingConfigs.debug
-                minifyEnabled enableProguardInReleaseBuilds
-                proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            }
-        }
-
-        packagingOptions {
-            pickFirst "lib/armeabi-v7a/libc++_shared.so"
-            pickFirst "lib/arm64-v8a/libc++_shared.so"
-            pickFirst "lib/x86/libc++_shared.so"
-            pickFirst "lib/x86_64/libc++_shared.so"
-        }
-
-        // applicationVariants are e.g. debug, release
-        applicationVariants.all { variant ->
-            variant.outputs.each { output ->
-                // For each separate APK per architecture, set a unique version code as described here:
-                // https://developer.android.com/studio/build/configure-apk-splits.html
-                def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-                def abi = output.getFilter(OutputFile.ABI)
-                if (abi != null) {  // null for the universal-debug, universal-release variants
-                    output.versionCodeOverride =
-                            versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-                }
-
-            }
-        }
-    }
-
-    dependencies {
-        implementation fileTree(dir: "libs", include: ["*.jar"])
-        //noinspection GradleDynamicVersion
-        implementation "com.facebook.react:react-native:+"  // From node_modules
-
-        implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
-        debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
-          exclude group:'com.facebook.fbjni'
-        }
-
-        debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-            exclude group:'com.facebook.flipper'
-        }
-
-        debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
-            exclude group:'com.facebook.flipper'
-        }
-
-        if (enableHermes) {
-            def hermesPath = "../../node_modules/hermes-engine/android/";
-            debugImplementation files(hermesPath + "hermes-debug.aar")
-            releaseImplementation files(hermesPath + "hermes-release.aar")
-        } else {
-            implementation jscFlavor
-        }
-
-        // implementation 'com.google.firebase:firebase-analytics:17.3.0'
-    }
+    ...
+    
 
     apply plugin: 'com.google.gms.google-services' << add
 
@@ -984,12 +271,12 @@ $ yarn start & yarn ios
 
         <uses-permission android:name="android.permission.INTERNET" />
 
-    		<< add
+        << add start
         <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
         <uses-permission android:name="android.permission.VIBRATE" />
         <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
         <uses-permission android:name="android.permission.WAKE_LOCK" />
-        
+        << add end        
 
         <application
           android:name=".MainApplication"
@@ -1011,6 +298,7 @@ $ yarn start & yarn ios
           </activity>
           <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
+          << add start
           <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
           <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
               <intent-filter>
@@ -1031,7 +319,8 @@ $ yarn start & yarn ios
           <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
                       android:value="Super channel description"/>
           <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                      android:resource="@android:color/white"/>  << add
+                      android:resource="@android:color/white"/>  
+          << add end
           
         </application>
 
