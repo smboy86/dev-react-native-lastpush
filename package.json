@@ -3,11 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint ."
+    "start:reset": "node node_modules/react-native/local-cli/cli.js start --reset-cache",
+    "clean": "cd android && ./gradlew clean",
+    "ios": "react-native run-ios",
+    "android": "react-native run-android",
+    "android:apk": "cd android && ./gradlew assembleRelease",
+    "android:aab": "cd android && ./gradlew app:bundleRelease",
+    "android:shake": "adb shell input keyevent 82",
+    "android:release": "node node_modules/react-native/local-cli/cli.js run-android --variant=release"
   },
   "dependencies": {
     "react": "16.11.0",
